@@ -1,0 +1,6 @@
+@StatelessServiceWebApiWithDI_HostAddress = http://localhost:5031
+
+GET {{StatelessServiceWebApiWithDI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
