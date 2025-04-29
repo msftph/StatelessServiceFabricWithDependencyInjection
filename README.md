@@ -1,0 +1,1 @@
+# StatelessServiceFabricWithDependencyInjection
