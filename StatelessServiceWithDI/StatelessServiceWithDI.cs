@@ -1,4 +1,6 @@
 using System.Fabric;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
@@ -19,8 +21,22 @@ namespace StatelessServiceWithDI
         /// </summary>
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
-        {
-            return [];
+        {            
+            return new ServiceInstanceListener[]
+            {
+                // ServiceInstanceListener creates a listener for this service instance.and creates a new CustomCommunicationListener,
+                // passing in the service context for the service instance
+                new ServiceInstanceListener(serviceContext => 
+                    new CustomCommunicationListener(serviceContext, () => 
+                    {
+                        // perform dependency injection setup here
+                        // a scope will be created during the request lifetime to handle any scoped services                        
+                        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+                        builder.Services.AddSingleton<IOtherthingProvider, OtherthingProvider>();
+                        builder.Services.AddSingleton<ISomethingProvider, SomethingProvider>();
+                        return builder;
+                    }))
+            };
         }
 
         /// <summary>

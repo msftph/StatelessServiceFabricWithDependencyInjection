@@ -22,12 +22,8 @@ namespace StatelessServiceWithDI
                 // Registering a service maps a service type name to a .NET type.
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.                
-                Task registerServiceAsyncTask = ServiceRuntime.RegisterServiceAsync("StatelessServiceWithDIType",
-                    context => {
-                        IHost host = CreateHost(context);
-                        return host.Services.GetRequiredService<StatelessServiceWithDI>();
-                    });
-                registerServiceAsyncTask.GetAwaiter().GetResult();
+                ServiceRuntime.RegisterServiceAsync("StatelessServiceWithDIType",
+                    context => new StatelessServiceWithDI(context)).GetAwaiter().GetResult();                
 
                 ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(StatelessServiceWithDI).Name);
 
@@ -39,17 +35,6 @@ namespace StatelessServiceWithDI
                 ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
                 throw;
             }
-        }
-
-        public static IHost CreateHost(StatelessServiceContext context)
-        {
-            return Host.CreateDefaultBuilder()
-                .ConfigureServices((hostContext, services) =>
-                {                    
-                    services.AddSingleton(context);
-                    services.AddSingleton<StatelessServiceWithDI>();
-                })
-                .Build();
         }
     }
 }
