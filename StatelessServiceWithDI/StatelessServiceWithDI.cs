@@ -27,7 +27,7 @@ namespace StatelessServiceWithDI
                 // ServiceInstanceListener creates a listener for this service instance.and creates a new CustomCommunicationListener,
                 // passing in the service context for the service instance
                 new ServiceInstanceListener(serviceContext => 
-                    new CustomCommunicationListener(serviceContext, () => 
+                    new TcpCommunicationListener(serviceContext, () => 
                     {
                         // perform dependency injection setup here
                         // a scope will be created during the request lifetime to handle any scoped services                        
